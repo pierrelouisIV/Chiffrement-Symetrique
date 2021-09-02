@@ -5,7 +5,7 @@
 #define taille_F 8
 #define taille_K 3
 
-// la fonction F
+// la fonction de filtrage F
 int F[taille_F] = {0, 0, 0, 1, 1, 0, 1, 0};
 
 // La clef K
@@ -24,7 +24,7 @@ uint16_t CF3 = 0x002D;  // <=> (0000000000101101) --
 // nombre de tours :
 int n = 0;
 
-//
+// on demande la taille souhaité
 void init_n()
 {
     printf("  Veuillez entrez la taille de la suite chiffrante : ");
@@ -45,7 +45,7 @@ void init_K()
 }
 
 // On initialise la fonction F : {0,1}³ -> {0,1}
-// initialisation falcutative
+// (initialisation falcutative)
 void init_F(int * tableau)
 {
     F[0] = tableau[0];
@@ -66,7 +66,7 @@ int fonction_F(int x0, int x1, int x2)
     return F[x0_x1_x2];
 }
 
-// Initialisation des LFSR
+// Initialisation des LFSR avec la clef K
 void init_LFSR()
 {
     LFSR1 = K[0];
@@ -77,7 +77,6 @@ void init_LFSR()
 // LFSR 1
 int LFSR_1()
 {
-    //printf("valeur du lfsr1 = (%d)base10 = (%x)base16 \n", LFSR1, LFSR1);
     // on sépare le CF1 en 4 masques et on XOR les bits du LFSR :
     int bit_15 = ((LFSR1 & 0x0001) 
             ^ ((LFSR1 & 0x0002) >> 1)
@@ -85,16 +84,15 @@ int LFSR_1()
             ^ ((LFSR1 & 0x0080) >> 7));
 
     int bit_s = LFSR1 & 0x0001;
-    printf("\n bit_15 du LFSR1 = %d\n", bit_15);
+    //printf("\n bit_15 du LFSR1 = %d\n", bit_15);
     LFSR1 = (LFSR1 >> 1) | (bit_15 << 15);
-    printf("valeur du lfsr1 = (%d)base10 = (%x)base16 \n", LFSR1, LFSR1);
+    //printf("valeur du lfsr1 = (%d)base10 = (%x)base16 \n", LFSR1, LFSR1);
     return bit_s;
 }
 
 // LFSR 2
 int LFSR_2()
 {
-    //printf("\n coef 2 = %d = %x \n", CF2, CF2);
     // On sépare le CF2 en 4 masques :
     int bit_15 = ((LFSR2 & 0x0001)
             ^ ((LFSR2 & 0x0002) >> 1)
@@ -103,18 +101,16 @@ int LFSR_2()
 
     // On récupère le bit de poid faible
     int bit_s = LFSR2 & 0x0001;
-    printf("bit_15 du LFSR2 = %d\n", bit_15);
+    //printf("bit_15 du LFSR2 = %d\n", bit_15);
     // On met à jour le LFSR :
     LFSR2 = (LFSR2 >> 1) | (bit_15 << 15);
-
-    printf("valeur du LFSR2 = (%d)base10 = (%x)base16 \n", LFSR2, LFSR2);
+    //printf("valeur du LFSR2 = (%d)base10 = (%x)base16 \n", LFSR2, LFSR2);
     return bit_s;
 }
 
 // LFSR 3
 int LFSR_3()
 {
-    //printf("\n coef 3 = %d = %x \n", CF3, CF3);
     // On sépare le CF3 en 4 masques :
     int bit_15 = ((LFSR3 & 0x0001)
             ^ ((LFSR3 & 0x0004) >> 2)
@@ -123,11 +119,10 @@ int LFSR_3()
 
     // On récupère le bit de poid faible
     int bit_s = LFSR3 & 0x0001;
-    printf("bit_15 du LFSR3 = %d\n", bit_15);
+    //printf("bit_15 du LFSR3 = %d\n", bit_15);
     // On met à jour le LFSR :
     LFSR3 = (LFSR3 >> 1) | (bit_15 << 15);
-
-    printf("valeur du LFSR3 = (%d)base10 = (%x)base16 \n", LFSR3, LFSR3);
+    //printf("valeur du LFSR3 = (%d)base10 = (%x)base16 \n", LFSR3, LFSR3);
     return bit_s;
 }
 
@@ -138,9 +133,15 @@ int produire_suite()
     init_n();
     init_K();
     init_LFSR();
+    for(int i = 0; i< n; ++i)
+    {
+        printf(" %d ", i);
+    }
+    printf("\n");
     for (int i = 0; i < n; i++)
     {
-        printf("S_%d = %d \n", i, fonction_F(LFSR_1(), LFSR_2(), LFSR_3()));
+        printf(" %d ", fonction_F(LFSR_1(), LFSR_2(), LFSR_3()));
     }
+    printf("\n");
     return 1;
 }
